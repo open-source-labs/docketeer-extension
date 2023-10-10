@@ -1,5 +1,10 @@
-import { ContainerPS, LogObject, NetworkContainerType, NetworkInspect, NetworkType } from "../../types";
-
+import { ContainerPS, LogObject, NetworkContainerType, NetworkInspect, NetworkType, PromDataSource } from "../../types";
+import util from 'util';
+import fs from 'fs';
+const writeFileAsync = util.promisify(fs.writeFile);
+const readFileAsync = util.promisify(fs.readFile);
+const appendFileAsync = util.promisify(fs.appendFile);
+const readDirAsync = util.promisify(fs.readdir);
 /**
  * @abstract Spawns an execution terminal but does so asynchronously.
  *           Therefore, we can await response. 
@@ -8,8 +13,8 @@ import { ContainerPS, LogObject, NetworkContainerType, NetworkInspect, NetworkTy
  * @link https://nodejs.org/api/child_process.html#child_processexeccommand-options-callback
  * @returns {Promise}
  */
-import util from 'util';
 import { exec } from 'child_process';
+import path from "path";
 export const execAsync = util.promisify(exec);
 
 
@@ -139,3 +144,68 @@ export const getContainersOnNetwork = async (networkId: string): Promise<Network
     console.error(`Error Extracting Containers from network ${networkId} with Error: `, error);
   }
 }
+
+
+export const buildConfig = async(promConfig: PromDataSource) => {
+  try {
+    const segments = promConfig.url.split('localhost');
+    const lastSegment = segments[segments.length - 1];
+    const adjustedUrl = promConfig.url.includes('localhost') ? `host.docker.internal${lastSegment}` : promConfig.url;
+    const matches: string[] = (promConfig.match && promConfig.match.length !== 0) ? promConfig.match.split(',') : ['{}']; // {} matches everything
+    let formattedMatches = '';
+    matches.forEach(element => {
+      formattedMatches += `        - '${element}'\n`;
+    })
+    const text = `
+  - job_name: '${promConfig.jobname}'
+    metrics_path: '${promConfig.endpoint}'
+    scrape_interval: 15s
+    honor_labels: true
+    params:
+      'match[]':
+  ${formattedMatches}
+    static_configs:
+      - targets:
+        - '${adjustedUrl}'
+    relabel_configs:
+      - target_label: '${promConfig.jobname}'
+        replacement: 'true'\n\n`;
+    // write this text into new file, labeled like promt_${id}.yml
+    const path = `../../imageConfigs/prometheus/subset_ymls/prom_${promConfig.id}.yml`
+    await writeFileAsync(path, text);
+    return path;
+  } catch (error) {
+    console.error('Error building Config:', error);
+    throw error;
+  }
+
+}
+
+export const buildMasterConfig = async (pathToBaseFile: string, pathToSubDir: string, outputFile: string) => {
+  try {
+    const startText = await readFileAsync(pathToBaseFile, 'utf-8');
+
+    // Write intial text to outpath
+    await writeFileAsync(outputFile, startText);
+    const files = await readDirAsync(pathToSubDir);
+    for (const file of files) {
+      const filePath = path.join(pathToSubDir, file);
+      const fileContent = await readFileAsync(filePath, 'utf-8');
+      await appendFileAsync(outputFile, fileContent);
+    }
+    
+  } catch (error) {
+    console.error('Error buildMasterConfig:', error);
+    throw error;
+  }
+}
+
+const test = {
+  "id": 2,
+  "type_of_id": 2,
+    "url": "http://localhost:45555",
+      "endpoint": "/federation",
+        "jobname": "bigtest"
+}
+
+buildConfig(test)

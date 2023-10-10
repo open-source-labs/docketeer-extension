@@ -1,0 +1,16 @@
+
+  - job_name: 'bigtest'
+    metrics_path: '/federation'
+    scrape_interval: 15s
+    honor_labels: true
+    params:
+      'match[]':
+          - '{}'
+
+    static_configs:
+      - targets:
+        - 'host.docker.internal:45555'
+    relabel_configs:
+      - target_label: 'bigtest'
+        replacement: 'true'
+
