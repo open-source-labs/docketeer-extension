@@ -9,19 +9,3 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090', 'node-exporter:9100', 'cadvisor:8080']
 
-  - job_name: 'federate'
-    metrics_path: '/federate'
-    scrape_interval: 15s
-    honor_labels: true
-    params:
-      'match[]':
-        - '{job="kubernetes-apiservers"}'
-        - '{job="kubernetes-nodes"}'
-        - '{job="kubernetes-nodes-cadvisor"}'
-        - '{job="kubernetes-service-endpoints"}'
-    static_configs:
-      - targets:
-        - 'host.docker.internal:45555'
-    relabel_configs:
-      - target_label: 'federation'
-        replacement: 'true'

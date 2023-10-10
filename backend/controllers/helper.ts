@@ -146,12 +146,12 @@ export const getContainersOnNetwork = async (networkId: string): Promise<Network
 }
 
 
-export const buildConfig = async(promConfig: PromDataSource) => {
+export const buildConfig = async(promConfig: PromDataSource, outpath: string) => {
   try {
     const segments = promConfig.url.split('localhost');
     const lastSegment = segments[segments.length - 1];
     const adjustedUrl = promConfig.url.includes('localhost') ? `host.docker.internal${lastSegment}` : promConfig.url;
-    const matches: string[] = (promConfig.match && promConfig.match.length !== 0) ? promConfig.match.split(',') : ['{}']; // {} matches everything
+    const matches: string[] = (promConfig.match && promConfig.match.length !== 0) ? promConfig.match.replaceAll(" ", "").split(',') : ['{}']; // {} matches everything
     let formattedMatches = '';
     matches.forEach(element => {
       formattedMatches += `        - '${element}'\n`;
@@ -171,9 +171,7 @@ export const buildConfig = async(promConfig: PromDataSource) => {
       - target_label: '${promConfig.jobname}'
         replacement: 'true'\n\n`;
     // write this text into new file, labeled like promt_${id}.yml
-    const path = `../../imageConfigs/prometheus/subset_ymls/prom_${promConfig.id}.yml`
-    await writeFileAsync(path, text);
-    return path;
+    await writeFileAsync(outpath, text);
   } catch (error) {
     console.error('Error building Config:', error);
     throw error;
@@ -193,19 +191,9 @@ export const buildMasterConfig = async (pathToBaseFile: string, pathToSubDir: st
       const fileContent = await readFileAsync(filePath, 'utf-8');
       await appendFileAsync(outputFile, fileContent);
     }
-    
+
   } catch (error) {
     console.error('Error buildMasterConfig:', error);
     throw error;
   }
 }
-
-const test = {
-  "id": 2,
-  "type_of_id": 2,
-    "url": "http://localhost:45555",
-      "endpoint": "/federation",
-        "jobname": "bigtest"
-}
-
-buildConfig(test)

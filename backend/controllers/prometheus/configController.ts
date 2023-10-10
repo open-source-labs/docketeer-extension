@@ -1,9 +1,14 @@
 // Types
 import { Request, Response, NextFunction } from 'express';
-import { execAsync } from '../helper';
+import { buildConfig, buildMasterConfig, execAsync } from '../helper';
 import { ServerError } from '../../backend-types';
 import { EndpointType, PromDataSource } from '../../../types';
 import pool from '../../db/model';
+
+const BASE_PROM_PATH = '../../../prometheus/baseprometheus.yml'
+const BUILT_PROM_FILE = '../../../prometheus/prometheus.yml'
+const SUB_PROM_DIR = '../../../prometheus/subset_ymls/'
+
 
 interface ConfigController {
   /**
@@ -69,7 +74,7 @@ configController.getTypeOptions = async (req: Request, res: Response, next: Next
 configController.getDataSources = async (req: Request, res: Response, next: NextFunction): Promise<void> =>  {
   try {
     const text = `
-    SELECT b.type_of, b.id AS "type_of_id", a.id, a.url, a.endpoint, a.match, a.jobname
+    SELECT b.type_of, b.id AS "type_of_id", a.id, a.url, a.endpoint, a.match, a.jobname, a.filepath
     FROM datasource a
     LEFT JOIN endpoint_type b on a.type_of=b.id;`;
     
@@ -95,10 +100,22 @@ configController.createDataSource = async (req: Request, res: Response, next: Ne
     VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING id;`;
     const { type_of_id, url, endpoint, ssh_key, match, jobname } = req.body;
+    
     const values = [type_of_id, url, endpoint, ssh_key, match, jobname];
     const result = await pool.query(text, values);
     const data: { [key: string]: string } = await result.rows[0];
     res.locals.id = data.id;
+    const filePath = `${SUB_PROM_DIR}/prom_${data.id}.yml`
+    await buildConfig({ type_of_id, url, endpoint, ssh_key, match, jobname }, filePath);
+    const updateQuery =
+      `UPDATE datasource SET filepath = $1 WHERE id=$2;`;
+    const valuesUpdate = [filePath, data.id];
+    console.log(valuesUpdate);
+    console.log('Up to query')
+    await pool.query(updateQuery, valuesUpdate);
+    console.log('Past query');
+    await buildMasterConfig(BASE_PROM_PATH, SUB_PROM_DIR, BUILT_PROM_FILE);
+    await fetch('http://prometheus:9090/-/reload', { method: 'POST' });
     return next();
   } catch (error) {
     const errObj: ServerError = {

@@ -12,7 +12,8 @@ CREATE TABLE datasource(
   endpoint varchar,
   ssh_key varchar,
   match varchar,
-  jobname varchar NOT NULL
+  jobname varchar NOT NULL UNIQUE,
+  filepath varchar
 );
 
 CREATE TABLE dashboards(
@@ -33,8 +34,8 @@ INSERT INTO endpoint_type (type_of) VALUES ('Kubernetes');
 
 
 --Below is just for development. Remove when feature to set prometheus configs is working.
-INSERT INTO datasource (type_of, url, endpoint, match, jobname)
-VALUES (2, 'http://localhost:45555', '/federation', '{job="kubernetes-apiservers"},{job="kubernetes-nodes"},{job="kubernetes-nodes-cadvisor"},{job="kubernetes-service-endpoints"}', 'federate');
+INSERT INTO datasource (type_of, url, endpoint, match, jobname, filepath)
+VALUES (2, 'http://localhost:45555', '/federation', '{job="kubernetes-apiservers"},{job="kubernetes-nodes"},{job="kubernetes-nodes-cadvisor"},{job="kubernetes-service-endpoints"}', 'federate', '../../prometheus/subset_ymls/prom_2.yml');
 
 ALTER TABLE endpoint_type OWNER TO admin;
 ALTER TABLE datasource OWNER TO admin;
