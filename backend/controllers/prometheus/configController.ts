@@ -4,6 +4,9 @@ import { buildConfig, buildMasterConfig, execAsync } from '../helper';
 import { ServerError } from '../../backend-types';
 import { EndpointType, PromDataSource } from '../../../types';
 import pool from '../../db/model';
+import util from 'util';
+import fs from 'fs';
+const unlinkAsync = util.promisify(fs.unlink);
 
 const BASE_PROM_PATH = '../../../prometheus/baseprometheus.yml'
 const BUILT_PROM_FILE = '../../../prometheus/prometheus.yml'
@@ -110,10 +113,9 @@ configController.createDataSource = async (req: Request, res: Response, next: Ne
     const updateQuery =
       `UPDATE datasource SET filepath = $1 WHERE id=$2;`;
     const valuesUpdate = [filePath, data.id];
-    console.log(valuesUpdate);
-    console.log('Up to query')
+    
     await pool.query(updateQuery, valuesUpdate);
-    console.log('Past query');
+
     await buildMasterConfig(BASE_PROM_PATH, SUB_PROM_DIR, BUILT_PROM_FILE);
     await fetch('http://prometheus:9090/-/reload', { method: 'POST' });
     return next();
@@ -153,9 +155,16 @@ configController.deleteDataSource = async (req: Request, res: Response, next: Ne
   try {
     const text = `
     DELETE FROM datasource
-    WHERE id=($1);`;
+    WHERE id=($1)
+    RETURNING *;`;
     const { id } = req.params;
-    await pool.query(text, [id]);
+    const result = await pool.query(text, [id]);
+    const filepath = result.rows[0];
+
+    await unlinkAsync(filepath);
+    await buildMasterConfig(BASE_PROM_PATH, SUB_PROM_DIR, BUILT_PROM_FILE);
+    await fetch('http://prometheus:9090/-/reload', { method: 'POST' });
+
     return next();
   } catch (error) {
     const errObj: ServerError = {
