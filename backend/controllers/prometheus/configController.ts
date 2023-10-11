@@ -159,7 +159,7 @@ configController.deleteDataSource = async (req: Request, res: Response, next: Ne
     RETURNING *;`;
     const { id } = req.params;
     const result = await pool.query(text, [id]);
-    const filepath = result.rows[0];
+    const filepath = result.rows[0].filepath;
 
     await unlinkAsync(filepath);
     await buildMasterConfig(BASE_PROM_PATH, SUB_PROM_DIR, BUILT_PROM_FILE);

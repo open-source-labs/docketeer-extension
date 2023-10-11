@@ -157,13 +157,14 @@ export const buildConfig = async(promConfig: PromDataSource, outpath: string) =>
       formattedMatches += `        - '${element}'\n`;
     })
     const text = `
+  \n
   - job_name: '${promConfig.jobname}'
     metrics_path: '${promConfig.endpoint}'
     scrape_interval: 15s
     honor_labels: true
     params:
       'match[]':
-  ${formattedMatches}
+${formattedMatches}
     static_configs:
       - targets:
         - '${adjustedUrl}'

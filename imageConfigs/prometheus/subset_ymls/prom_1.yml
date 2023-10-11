@@ -1,4 +1,4 @@
- - job_name: 'federate'
+  - job_name: 'federate'
     metrics_path: '/federate'
     scrape_interval: 15s
     honor_labels: true
