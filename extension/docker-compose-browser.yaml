@@ -88,6 +88,7 @@ services:
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --log.level=error
+      - --web.enable-lifecycle
     depends_on:
       - node-exporter
       - cadvisor
