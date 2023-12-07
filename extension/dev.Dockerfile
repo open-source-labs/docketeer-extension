@@ -54,8 +54,9 @@ RUN curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${
   && tar xzvf docker-${DOCKERVERSION}.tgz --strip 1 -C /usr/local/bin docker/docker \
   && rm docker-${DOCKERVERSION}.tgz
   
-#install grype to run image vulnerability scans
+#install grype to run image vulnerability scans and preload grype's db
 RUN curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+RUN grype db update
 
 # Copies necessary files into extension directory
 COPY --from=builder /backend backend
