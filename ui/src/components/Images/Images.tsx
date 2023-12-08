@@ -14,21 +14,26 @@ import ImagesSummary from '../ImagesSummary/ImagesSummary';
  * @description | Provides ability to pull images from DockerHub image repository, run images, and remove images
  **/
 
+// ---------------------------------------------
+// eslint-disable-next-line react/prop-types
+// optional TestParams for testing only
+
 export interface TestParams {
   imagesListTest?: ImageType[];
 }
-// eslint-disable-next-line react/prop-types
-// optional TestParams for testing only
+// ---------------------------------------------
+
 const Images = (params?: TestParams): React.JSX.Element => {
   console.log('Running images function');
-  // const reduxImagesList = useAppSelector((state) => state.images.imagesList);
-  // const imagesList = params.imagesListTest ? params.imagesListTest : reduxImagesList;
-
+  const reduxImagesList = useAppSelector((state) => state.images.imagesList);
+  const imagesList: ImageType[] = params.imagesListTest ? params.imagesListTest : reduxImagesList;
+  
   const dispatch = useAppDispatch();
-
-  // useEffect((): void => {
-  //   dispatch(fetchImages());
-  // }, []);
+  
+  // on initial render, send a dispatch that will fetch the list of docker images from the backend
+  useEffect(() => {
+    dispatch(fetchImages());
+  }, []);
 
   const runImage = async (image: ImageType) => {
     const success = await Client.ImageService.runImage(
@@ -89,15 +94,7 @@ const Images = (params?: TestParams): React.JSX.Element => {
     );
   };
 
-  // mock images data
-  const imagesList = [
-    { 'Repository': 'ducketeer', 'Critical': 10, 'High': 10, 'Med': 15, 'Low': 5 },
-    { 'Repository': 'kirby-db', 'Critical': 2, 'High': 20, 'Med': 30, 'Low': 15 },
-    { 'Repository': 'banana', 'Critical': 4, 'High': 2, 'Med': 10, 'Low': 5 }
-  ];
-
-  console.log('images list: ', imagesList);
-
+  // declare a constant array of elements and push an image card into this array for each image in the imagesList
   const renderedImages: React.JSX.Element[] = [];
 
   for(let i = 0; i < imagesList.length; i++) {
@@ -105,67 +102,17 @@ const Images = (params?: TestParams): React.JSX.Element => {
   }
 
   return (
-    <div>
-    
+    <div className={styles.ImagesContainer}>
       {/* VULNERABILITY SUMMARY INFO */}
       <div>
         <ImagesSummary/>
       </div>
-
       {/* IMAGE CARDS */}
-      <div>
+      <div className={styles.ImagesCardsView}>
         {renderedImages}
       </div>
     
     </div>
-
-    // <div className={styles.wrapper}>
-    //   <div className={styles.availableImagesHolder}>
-    //     <h2>AVAILABLE IMAGES</h2>
-    //     <div className={styles.imageHolder}>
-    //       {imagesList.map((image, i: number) => {
-    //         return (
-    //           <div key={`image-${i}`} className={styles.imageCard}>
-    //             <div className={styles.textHolder}>
-    //               <figure>
-    //                 <img
-    //                   className={styles.image}
-    //                   src={`https://d36jcksde1wxzq.cloudfront.net/54e48877dab8df8f92cd.png`}
-    //                 />
-    //               </figure>
-    //               <div>
-    //                 <h2>{image.Repository}</h2>
-    //                 <p>{image.Tag}</p>
-    //                 <p>{`Image ID: ${image.ID}`}</p>
-    //                 <p>{`Image Size: ${image.Size}`}</p>
-    //               </div>
-    //               <div className={styles.buttonHolder}>
-    //                 <div className={styles.buttonSpacer}>
-    //                   <button
-    //                     role="button"
-    //                     name="RUN"
-    //                     className={globalStyles.buttonSmall}
-    //                     onClick={() => runImageAlert(image)}
-    //                   >
-    //                     RUN
-    //                   </button>
-    //                   <button
-    //                     role="button"
-    //                     name="REMOVE"
-    //                     className={globalStyles.buttonSmall}
-    //                     onClick={() => removeImageAlert(image)}
-    //                   >
-    //                     REMOVE
-    //                   </button>
-    //                 </div>
-    //               </div>
-    //             </div>
-    //           </div>
-    //         );
-    //       })}
-    //     </div>
-    //   </div>
-    // </div>
   );
 };
 

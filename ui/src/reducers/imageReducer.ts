@@ -10,6 +10,7 @@ export const fetchImages = createAsyncThunk(
   'containers/fetchImages',
   async () => {
     const result: ImageType[] = await Client.ImageService.getImages();
+    // const result: String[] = await Client.ImageService.getImages();
     return result;
   }
 )

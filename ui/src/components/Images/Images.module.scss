@@ -4,6 +4,18 @@
   margin: $default-page-margin;
 }
 
+.ImagesContainer {
+  margin-top: 30px;
+  // border: solid 1px blue;
+}
+
+.ImagesCardsView {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  margin-top: 20px;
+}
+
 .imageSearchHolder {
   display: flex;
   flex-direction: column;

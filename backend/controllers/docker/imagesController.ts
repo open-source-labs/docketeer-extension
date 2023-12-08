@@ -58,9 +58,18 @@ imageController.getImages = async (req: Request, res: Response, next: NextFuncti
     const { stdout, stderr } = await execAsync('docker images --format "{{json .}},"');
     if (stderr) throw new Error(stderr);
     const images: ImageType[] = JSON.parse(`[${stdout.trim().slice(0, -1)}]`);
+    // console.log('This is the Raw Array of Objects Images: ', images);
+
+    // Add new ScanName on each object
+    images.forEach(imageObj => imageObj.ScanName = imageObj.Repository + ':' + imageObj.Tag);
+
+    // Store an array of strings with our images names
+    res.locals.images = images;
     
-    res.locals.images = images.forEach(imageObj => imageObj.ScanName = imageObj.Repository + ':' + imageObj.Tag);
+    // res.locals.images = images.map(imageObj => imageObj.ScanName = imageObj.Repository + ':' + imageObj.Tag);
+    console.log('This is the Array of Images Objects: ', res.locals.images);
     
+
     return next();
   } catch (error) {
     const errObj: ServerError = {

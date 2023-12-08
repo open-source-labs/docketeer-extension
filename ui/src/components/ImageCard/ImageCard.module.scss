@@ -3,49 +3,127 @@
 }
 
 .imageCard {
-	border: 1px solid white;
-  height: 10vh;
+	border: 1px solid rgba(255, 255, 255, 0.629);
+  border-radius: 5px;
+  height: max-content;
 	margin: 10px;
 	padding: 10px;
 	display: flex;
+  // flex-direction: column;
 	justify-content: space-between;
+  align-items: flex-start;
+  width: 45%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+.ImageName {
+  font-weight: bold;
+}
 
+.buttons {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
+.VulnerabilitiesBlock {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+
+}
+
+.VulnerabilitiesTitle{
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  text-align: left;
+  color: rgba(255, 255, 255, 0.891);
+  font-weight: 500;
+}
 
 .imageInfo {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
+  // border: solid 2px white;
+  height: max-content;
+  align-items: left;
 }
 
 .imageVulnerabilities {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  // margin-top: 20px;
+}
+
+.imgVulDiv{
+  height: max-content;
+  width: 70px;
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+}
+
+.imgCardButton{
+  height: max-content;
+  width: max-content;
+  border: 1px solid white;
+  border-radius: 5px;
+  margin-right: 8px;
+  margin-right: 8px;
+  padding: 5px;
+  font-weight: bolder;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+  &:hover,
+  &:active {
+    background-color: scale-color(color(blue, dark), $lightness: -10%);
+  }
+
+  &:focus {
+    outline-style: solid;
+    outline-color: transparent;
+    box-shadow: 0 0 0 4px scale-color(color(blue, dark), $lightness: -40%);
+  }
+
+  &--small {
+    font-size: 1.15rem;
+  }
 }
 
 .critical {
   background-color: #5C1A18;
   margin: 2px;
-  padding: 2px;
+  padding: 5px;
+  text-align: center;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px 2px black;
 }
 
 .high {
   background-color: #ad312d;
   margin: 2px;
-  padding: 2px;
+  padding: 5px;
+  text-align: center;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px 2px black;
 }
 
-.med {
-  background-color: #fa8e41;
+.medium {
+  background-color: #AE5944;
   margin: 2px;
-  padding: 2px;
+  padding: 5px;
+  text-align: center;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px 2px black;
 }
 
 .low {
-  background-color: #fac241;
+  background-color: #D99166;
   margin: 2px;
-  padding: 2px;
+  padding: 5px;
+  text-align: center;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px 2px black;
 }

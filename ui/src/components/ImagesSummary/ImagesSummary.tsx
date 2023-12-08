@@ -26,22 +26,22 @@ const ImagesSummary = (): React.JSX.Element => {
       
       {/* CRITICAL */}
       <div className={styles.critical} style={{ width: summary.c + '%' }}>
-        <p>CRITICAL</p>
+        <p className={styles.textColor}>CRITICAL</p>
       </div>
       
       {/* HIGH */}
       <div className={styles.high} style={{ width: summary.h + '%' }}>
-        <p>HIGH</p>
+        <p className={styles.textColor}>HIGH</p>
       </div>
       
       {/* MED */}
       <div className={styles.med} style={{ width: summary.m + '%' }}>
-        <p>MEDIUM</p>
+        <p className={styles.textColor}>MEDIUM</p>
       </div>
       
       {/* LOW */}
       <div className={styles.low} style={{ width: summary.l + '%' }}>
-        <p>LOW</p>
+        <p className={styles.textColor}>LOW</p>
       </div>
     
     </div>

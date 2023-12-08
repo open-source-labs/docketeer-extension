@@ -21,6 +21,7 @@ router.get('/', imageController.getImages, (req, res) => {
  * @returns
  */
 router.post('/scan', imageController.scanImages, (req, res) => {
+  res.set('Cache-control', 'public, max-age=86400')
   return res.status(200).json(res.locals.vulnerabilites);
 });
 

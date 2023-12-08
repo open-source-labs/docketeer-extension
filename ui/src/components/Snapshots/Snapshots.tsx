@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../Metrics/Metrics.module.scss';
+import globalStyles from '../global.module.scss';
 import { ddClientRequest } from '../../models/ddClientRequest'
 import Client from '../../models/Client'
 
@@ -60,7 +61,7 @@ const Snapshots = (): JSX.Element => {
         <select id="select-left">{dropDown}</select>
 
         <button
-          className={styles.button}
+          className={globalStyles.button1}
           onClick={() => retrieveSnapshot("left")}
         >
           RETRIEVE SNAPSHOT
@@ -79,7 +80,7 @@ const Snapshots = (): JSX.Element => {
         <select id="select-right">{dropDown}</select>
 
         <button
-          className={styles.button}
+          className={globalStyles.button1}
           onClick={() => retrieveSnapshot("right")}
         >
           RETRIEVE SNAPSHOT

@@ -4,11 +4,13 @@ import { useAppSelector, useAppDispatch } from '../../reducers/hooks';
 import { createAlert } from '../../reducers/alertReducer';
 import { createPrunePrompt } from '../../reducers/pruneReducer';
 
+
 import Alert from '../../components/Alert/Alert';
 import SideBar from '../../components/SideBar/SideBar';
 
 import styles from './SharedLayout.module.scss';
 import docketeerLogo from '../../../assets/docketeer-logo-light.png';
+import MenuIcon from '../../../assets/menu_icon.svg';
 import {
   fetchRunningContainers,
   fetchStoppedContainers,
@@ -84,6 +86,7 @@ function SharedLayout(): JSX.Element {
       )
     );
   };
+  
   const { volumes } = useAppSelector((state) => state.volumes);
 
   useEffect(() => {
@@ -147,11 +150,8 @@ function SharedLayout(): JSX.Element {
               </NavLink>
             </li>
             <li>
-              <div className={styles.hamburgerIcon} onClick={toggleSidebar}>
-                <div className={styles.bar} />
-                <div className={styles.bar} />
-                <div className={styles.bar} />
-              </div>
+              <img src={MenuIcon} className={styles.hamburgerIcon} onClick={toggleSidebar}>
+              </img>
               {isOpen && <SideBar toggleSideBar={toggleSidebar} prune={prune} isOpen={isOpen}/>}
             </li>
           </ul>

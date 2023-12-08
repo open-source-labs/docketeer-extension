@@ -24,5 +24,15 @@ export const ImageService = {
       console.error(`Failed to remove image by ID: ${imageId}`);
       return false;
     }
-  }
+  },
+
+  async getScan(scanName: string) {
+    try {
+      const scan = await ddClientRequest('/api/docker/image/scan', 'POST', { scanName: scanName })
+      return scan
+    } catch (error) {
+      console.error(`Failed to Scan the image vulnerability for ${scanName}`);
+      return
+    }
+  } 
 }

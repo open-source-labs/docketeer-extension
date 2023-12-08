@@ -2,7 +2,7 @@
 # install the corresponding node:18.12 based on the platform of the machine
 FROM --platform=$BUILDPLATFORM node:18.12-alpine3.16 AS builder
 
-#within the /backend folder, copy the packages, install with cache
+#within the /backend folder, copy the packages, install with cache 
 WORKDIR /backend
 COPY backend/package*.json .
 RUN --mount=type=cache,target=/usr/src/app/.npm \
@@ -13,12 +13,20 @@ COPY backend/. ./
 #within the /backend folder, copy the packages, install with cache
 FROM --platform=$BUILDPLATFORM node:18.12-alpine3.16 AS client-builder
 WORKDIR /ui
+
+
+# cache packages in layer
 COPY ui/package.json /ui/package.json
 COPY ui/package-lock.json /ui/package-lock.json
 RUN --mount=type=cache,target=/usr/src/app/.npm \
     npm set cache /usr/src/app/.npm && \
     npm install
+# install
 COPY ui/. ./
+# RUN npm run build
+
+
+
 
 # Creates the working directory for the extension
 FROM --platform=$BUILDPLATFORM node:18.12-alpine3.16
@@ -38,7 +46,7 @@ LABEL org.opencontainers.image.title="Docketeer" \
   <p>Greetings, fellow space traveler! We're thrilled that you've chosen our application to help you navigate and explore the vast universe of Docker infrastructure. As a Docketeer, you know that real-time tracking of metrics and logs is essential for staying ahead of potential issues and optimizing your workflows. Our extension provides you with the tools you need to take control of your Docker images, containers, volumes, and logs. With an intuitive interface, you can easily make the necessary adjustments to ensure a smooth journey through the cosmos of your Docker environment.</p> \
   <h4>About us</h4> \
   <p>As a team of passionate engineers, we are dedicated to improving the workflow of developers as they explore the vast universe of Docker infrastructure. We know that space travel can be complex and challenging, but with the right tools and support, you can navigate the stars with ease.</p> \
-  <p>Our mission is to provide Docketeers like you with the tools and support you need to make your Docker journey as smooth as possible. We strive to make our application intuitive, powerful, and user-friendly so that you can focus on exploring the Docker universe without worrying about the technical details.</p>" \
+<p>Our mission is to provide Docketeers like you with the tools and support you need to make your Docker journey as smooth as possible. We strive to make our application intuitive, powerful, and user-friendly so that you can focus on exploring the Docker universe without worrying about the technical details.</p>" \
   com.docker.extension.publisher-url="https://docketeer.io/" \
   com.docker.extension.additional-urls='[{"title":"Extension-Github","url":"https://github.com/oslabs-beta/docketeer-extension"},{"title":"Browser-Based-Github","url":"https://github.com/open-source-labs/Docketeer"},{"title":"Email","url":"mailto:docketeerxii@gmail.com"},{"title":"LinkedIn","url":"https://www.linkedin.com/company/docketeer/"}]' \
   com.docker.extension.categories="utility-tools" \

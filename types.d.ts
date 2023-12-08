@@ -78,6 +78,7 @@ export interface NetworkInspect{
   Options?: object;
   Labels?: object;
 }
+
 export interface ImageType{
   Containers?: string;
   CreatedAt?: string;
@@ -91,6 +92,14 @@ export interface ImageType{
   Tag: string;
   UniqueSize?: string;
   VirtualSize?: string;
+  Vulnerabilities?: object;
+}
+
+export interface ImageCardProps {
+  imgObj: ImageType,
+  key: number,
+  runImageAlert: (Image: ImageType) => void,
+  removeImageAlert: (Image: ImageType) => void,
 }
 
 export interface NetworkAndContainer{
