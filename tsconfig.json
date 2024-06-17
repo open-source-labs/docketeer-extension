@@ -10,7 +10,7 @@
     "strict": true,
     "skipLibCheck": true,
     //TODO: Changed to false
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "strictNullChecks": false,
     "baseUrl": "./",
     "allowSyntheticDefaultImports": true,
